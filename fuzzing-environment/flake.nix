@@ -69,6 +69,7 @@
           cargo
           rustc
           rust-bindgen
+          rustPackages.cbindgen
 
           # Build tools
           autoconf

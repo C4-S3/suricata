@@ -30,7 +30,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 SURICATA_REPO="https://github.com/OISF/suricata.git"
-SURICATA_BRANCH="master"
+# Don't specify branch, use default (main or master)
+SURICATA_BRANCH=""
 
 # Parse arguments
 CLEAN=0
@@ -115,12 +116,16 @@ log_success "Directories created"
 log_step "Step 1/6: Cloning Suricata"
 if [ ! -d "$SURICATA_SRC" ]; then
     log_info "Cloning Suricata from $SURICATA_REPO..."
-    git clone --depth 1 --branch "$SURICATA_BRANCH" "$SURICATA_REPO" "$SURICATA_SRC"
+    if [ -z "$SURICATA_BRANCH" ]; then
+        git clone --depth 1 "$SURICATA_REPO" "$SURICATA_SRC"
+    else
+        git clone --depth 1 --branch "$SURICATA_BRANCH" "$SURICATA_REPO" "$SURICATA_SRC"
+    fi
     log_success "Suricata cloned"
 else
     log_info "Suricata already cloned"
     cd "$SURICATA_SRC"
-    git pull origin "$SURICATA_BRANCH" || true
+    git pull || true
     log_success "Suricata updated"
 fi
 

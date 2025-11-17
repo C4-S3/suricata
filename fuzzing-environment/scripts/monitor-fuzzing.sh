@@ -23,7 +23,14 @@ MAGENTA='\033[0;35m'
 NC='\033[0m'
 
 # Verify environment
-if [ -z "${SURICATA_FUZZ_ROOT:-}" ]; then
+if [ -z "${FUZZING_ROOT:-}" ]; then
+    log_error "Not in Nix development environment"
+    echo "Run: nix develop"
+    exit 1
+fi
+
+# Backward compatibility
+SURICATA_FUZZ_ROOT="${FUZZING_ROOT}"
     echo "Not in Nix environment"
     exit 1
 fi

@@ -14,9 +14,10 @@
           config.allowUnfree = true;
         };
 
-        # Custom AFL++ with all features
+        # Custom AFL++ with all features and latest LLVM
         aflplusplus = pkgs.aflplusplus.override {
           pythonSupport = true;
+          llvmPackages = pkgs.llvmPackages_18;
         };
 
         # Python environment with all required packages
@@ -30,6 +31,13 @@
           construct
           pytest
           ipython
+          dpkt
+          pyshark
+          numpy
+          click
+          rich
+          tabulate
+          jinja2
         ]);
 
         # Suricata dependencies
@@ -52,6 +60,12 @@
           libhtp
           libmaxminddb
           luajit
+          lz4
+          nss
+          nspr
+          openssl
+          libnftnl
+          libmnl
 
           # Rust support
           cargo
@@ -70,7 +84,8 @@
         ];
 
         # Compiler toolchains with sanitizers
-        clangWithSanitizers = pkgs.llvmPackages_latest.clang;
+        clangWithSanitizers = pkgs.llvmPackages_18.clang;
+        llvmTools = pkgs.llvmPackages_18;
         gccWithSanitizers = pkgs.gcc13;
 
         # Debugging and analysis tools
@@ -144,7 +159,8 @@
           buildInputs = [
             # Fuzzing engines
             aflplusplus
-            pkgs.llvmPackages_latest.libllvm
+            llvmTools.libllvm
+            llvmTools.lld
 
             # Compilers
             clangWithSanitizers
@@ -214,11 +230,52 @@
             export MSAN_OPTIONS="halt_on_error=1"
 
             # Project paths
-            export SURICATA_FUZZ_ROOT="$(pwd)"
-            export SURICATA_SRC="$SURICATA_FUZZ_ROOT/suricata"
-            export BUILD_DIR="$SURICATA_FUZZ_ROOT/builds"
-            export CORPUS_DIR="$SURICATA_FUZZ_ROOT/corpus"
-            export FINDINGS_DIR="$SURICATA_FUZZ_ROOT/findings"
+            export FUZZING_ROOT="$(pwd)"
+            export SURICATA_SRC="$FUZZING_ROOT/suricata-src"
+            export BUILD_DIR="$FUZZING_ROOT/builds"
+            export CORPUS_DIR="$FUZZING_ROOT/corpus"
+            export FINDINGS_DIR="$FUZZING_ROOT/findings"
+            export CRASH_REPORTS_DIR="$FUZZING_ROOT/crash-reports"
+            export REPRODUCERS_DIR="$FUZZING_ROOT/reproducers"
+            export FUZZERS_DIR="$FUZZING_ROOT/fuzzers"
+            export SCRIPTS_DIR="$FUZZING_ROOT/scripts"
+            export BUILD_ASAN="$BUILD_DIR/suricata-asan"
+            export BUILD_UBSAN="$BUILD_DIR/suricata-ubsan"
+            export BUILD_COVERAGE="$BUILD_DIR/suricata-coverage"
+            export BUILD_FUZZERS="$BUILD_DIR/fuzzers"
+
+            # Coverage settings
+            export GCOV_PREFIX="$BUILD_DIR/coverage-data"
+            export GCOV_PREFIX_STRIP=10
+
+            # Rust settings
+            export CARGO_HOME="$FUZZING_ROOT/.cargo"
+            export RUSTFLAGS="-C debuginfo=2"
+
+            # Performance settings
+            export MAKEFLAGS="-j$(nproc)"
+
+            # Add scripts to PATH
+            export PATH="$SCRIPTS_DIR:$PATH"
+
+            # Create necessary directories
+            mkdir -p "$BUILD_DIR" "$CORPUS_DIR" "$FINDINGS_DIR" \
+                     "$CRASH_REPORTS_DIR" "$REPRODUCERS_DIR" \
+                     "$BUILD_FUZZERS" "$GCOV_PREFIX"
+
+            # Helpful aliases
+            alias fuzz-http='./scripts/fuzz-single.sh http'
+            alias fuzz-tls='./scripts/fuzz-single.sh tls'
+            alias fuzz-dns='./scripts/fuzz-single.sh dns'
+            alias fuzz-tcp='./scripts/fuzz-single.sh tcp'
+            alias fuzz-defrag='./scripts/fuzz-single.sh defrag'
+            alias fuzz-http2='./scripts/fuzz-single.sh http2'
+            alias fuzz-smb='./scripts/fuzz-single.sh smb'
+            alias fuzz-all='./scripts/fuzz-all-parallel.sh'
+            alias monitor='./scripts/monitor-fuzzing.sh'
+            alias analyze='python3 scripts/analyze-crashes.py'
+            alias coverage='./scripts/coverage-report.sh'
+            alias setup='./scripts/setup-everything.sh'
 
             echo -e "  ''${CYAN}CC''${NC}              = ''${GREEN}$CC''${NC}"
             echo -e "  ''${CYAN}CXX''${NC}             = ''${GREEN}$CXX''${NC}"

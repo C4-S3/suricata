@@ -28,7 +28,14 @@ log_error() { echo -e "${RED}✗${NC} $1"; }
 log_step() { echo -e "${CYAN}▶${NC} $1"; }
 log_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
 
-if [ -z "${SURICATA_FUZZ_ROOT:-}" ]; then
+if [ -z "${FUZZING_ROOT:-}" ]; then
+    log_error "Not in Nix development environment"
+    echo "Run: nix develop"
+    exit 1
+fi
+
+# Backward compatibility
+SURICATA_FUZZ_ROOT="${FUZZING_ROOT}"
     log_error "Not in Nix environment"
     exit 1
 fi

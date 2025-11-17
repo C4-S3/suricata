@@ -31,7 +31,14 @@ fi
 PROTOCOL="$1"
 CRASH_FILE="$2"
 
-if [ -z "${SURICATA_FUZZ_ROOT:-}" ]; then
+if [ -z "${FUZZING_ROOT:-}" ]; then
+    log_error "Not in Nix development environment"
+    echo "Run: nix develop"
+    exit 1
+fi
+
+# Backward compatibility
+SURICATA_FUZZ_ROOT="${FUZZING_ROOT}"
     log_error "Not in Nix environment"
     exit 1
 fi

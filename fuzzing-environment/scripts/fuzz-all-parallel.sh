@@ -31,7 +31,14 @@ log_step() { echo -e "${CYAN}▶${NC} $1"; }
 TIMEOUT="${1:-0}"
 
 # Verify environment
-if [ -z "${SURICATA_FUZZ_ROOT:-}" ]; then
+if [ -z "${FUZZING_ROOT:-}" ]; then
+    log_error "Not in Nix development environment"
+    echo "Run: nix develop"
+    exit 1
+fi
+
+# Backward compatibility
+SURICATA_FUZZ_ROOT="${FUZZING_ROOT}"
     log_error "Not in Nix development environment"
     echo "Run: nix develop"
     exit 1

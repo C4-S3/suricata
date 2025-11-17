@@ -20,8 +20,11 @@ from pathlib import Path
 
 def get_corpus_dir():
     """Get corpus directory from environment or default"""
-    fuzz_root = os.environ.get('SURICATA_FUZZ_ROOT', '.')
-    corpus_dir = Path(fuzz_root) / 'corpus' / 'http'
+    fuzz_root = os.environ.get('FUZZING_ROOT') or os.environ.get('CORPUS_DIR', '..')
+    if 'CORPUS_DIR' in os.environ:
+        corpus_dir = Path(os.environ['CORPUS_DIR']) / 'http'
+    else:
+        corpus_dir = Path(fuzz_root) / 'corpus' / 'http'
     corpus_dir.mkdir(parents=True, exist_ok=True)
     return corpus_dir
 

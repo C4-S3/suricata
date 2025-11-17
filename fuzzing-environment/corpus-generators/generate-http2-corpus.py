@@ -19,7 +19,7 @@ import struct
 from pathlib import Path
 
 def get_corpus_dir():
-    fuzz_root = os.environ.get('SURICATA_FUZZ_ROOT', '.')
+    fuzz_root = os.environ.get('FUZZING_ROOT', '.')
     corpus_dir = Path(fuzz_root) / 'corpus' / 'http2'
     corpus_dir.mkdir(parents=True, exist_ok=True)
     return corpus_dir

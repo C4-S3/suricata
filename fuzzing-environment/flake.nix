@@ -14,9 +14,8 @@
           config.allowUnfree = true;
         };
 
-        # Custom AFL++ with all features and latest LLVM
+        # AFL++ with LLVM 18 support
         aflplusplus = pkgs.aflplusplus.override {
-          pythonSupport = true;
           llvmPackages = pkgs.llvmPackages_18;
         };
 

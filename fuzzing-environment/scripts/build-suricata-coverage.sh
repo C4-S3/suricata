@@ -79,11 +79,7 @@ LDFLAGS="$COV_LDFLAGS" \
     --prefix="$BUILD_COV" \
     --enable-debug \
     --enable-unittests \
-    --disable-shared \
-    --enable-rust \
-    --enable-lua \
-    --enable-geoip \
-    --enable-hiredis
+    --disable-shared
 
 log_info "Building Suricata (this may take 5-10 minutes)..."
 make -j$(nproc) 2>&1 | grep -E "(error|warning:)" || true

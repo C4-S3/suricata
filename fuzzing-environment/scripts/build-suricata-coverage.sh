@@ -36,10 +36,6 @@ fi
 
 # Backward compatibility
 SURICATA_FUZZ_ROOT="${FUZZING_ROOT}"
-    log_error "Not in Nix development environment"
-    echo "Run: nix develop"
-    exit 1
-fi
 
 if [ ! -d "$SURICATA_SRC" ]; then
     log_error "Suricata source not found at $SURICATA_SRC"
@@ -54,6 +50,13 @@ BUILD_COV="$BUILD_DIR/suricata-coverage"
 mkdir -p "$BUILD_COV"
 
 cd "$SURICATA_SRC"
+
+# Bootstrap if needed
+if [ ! -f configure ]; then
+    log_info "Bootstrapping Suricata build system..."
+    ./autogen.sh
+    log_success "Bootstrap complete"
+fi
 
 # Clean previous build
 log_info "Cleaning previous build..."

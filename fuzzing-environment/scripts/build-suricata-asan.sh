@@ -51,6 +51,13 @@ mkdir -p "$BUILD_ASAN"
 
 cd "$SURICATA_SRC"
 
+# Bootstrap if needed
+if [ ! -f configure ]; then
+    log_info "Bootstrapping Suricata build system..."
+    ./autogen.sh
+    log_success "Bootstrap complete"
+fi
+
 # Clean previous build
 log_info "Cleaning previous build..."
 rm -rf build-asan

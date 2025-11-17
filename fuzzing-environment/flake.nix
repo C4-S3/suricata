@@ -98,9 +98,9 @@
 
         # Performance analysis
         perfTools = with pkgs; [
-          linuxPackages.perf
+          perf
           flamegraph
-          hotspot
+          # hotspot - Qt-based GUI, skip for now
         ];
 
         # Binary analysis
@@ -109,13 +109,13 @@
           elfutils
           patchelf
           radare2
-          ghidra
+          # ghidra - large Java-based tool, optional
         ];
 
         # Network tools
         networkTools = with pkgs; [
           tcpdump
-          wireshark-cli  # tshark, editcap
+          wireshark  # includes tshark, editcap
           tcpreplay
           nmap
         ];
@@ -139,8 +139,8 @@
         fuzzingTools = with pkgs; [
           honggfuzz
           radamsa
-          zzuf
-          afl-utils
+          # zzuf - may not be in nixpkgs
+          # afl-utils - not in nixpkgs, AFL++ has built-in tools
         ];
 
         # Coverage tools

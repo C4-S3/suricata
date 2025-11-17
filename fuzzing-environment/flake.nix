@@ -44,9 +44,8 @@
           # Core dependencies
           libpcap
           libyaml
-          libjansson
-          libmagic
-          file
+          jansson
+          file  # provides libmagic
           zlib
           pcre
           pcre2
@@ -56,8 +55,8 @@
           libnfnetlink
           libnetfilter_queue
           libnetfilter_log
-          libhtp
-          libmaxminddb
+          # libhtp - built by Suricata from bundled source
+          # libmaxminddb - optional GeoIP support
           luajit
           lz4
           nss
